@@ -239,7 +239,7 @@ function loadMainPage()
 function OnDeviceReady(){
 	valueCookie = window.localStorage.getItem("orsapp_apikey");
 	apiKeyString = JSON.stringify(valueCookie);
-	if(apiKeyString!="null")
+	/*if(apiKeyString!="null")
 	{
 		apiKey = valueCookie;
 		$.ajax({
@@ -257,7 +257,7 @@ function OnDeviceReady(){
 				alert(JSON.stringify(err));
 			}
 		});
-	}
+	}*/
 	$('#login').on('click','.bt_loginProprietario',function(){
 		var mail = $('#txt_email').val();
 		var psw = $('#txt_psw').val();
