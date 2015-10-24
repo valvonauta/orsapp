@@ -224,7 +224,7 @@ function loadMainPage()
 				if(giorniStampati.indexOf(giorno)==-1)
 				{
 					var giornoRepartoNumber = moment(turni[index]['data'],"YYYY-MM-DD").format("DD"); 
-					$('#listaGiorniReparto').append("<li><a href='#dtGiornoReparto' id='linkDtGiornoReparto' data-giornoNumerico='"+objTurno['giorno']+"' data-dataReparto='"+objTurno['data']+"' data-giornoText='"+giornoRepartoText+"'><img src='res/img/calendar.png' style='width:3em;'>"+giornoRepartoText+" "+giornoRepartoNumber+'</a>');
+					$('#listaGiorniReparto').append("<li><a href='#dtGiornoReparto' id='linkDtGiornoReparto' data-giornoNumerico='"+objTurno['giorno']+"' data-dataReparto='"+objTurno['data']+"' data-giornoText='"+giornoRepartoText+"'>"+giornoRepartoText+" "+giornoRepartoNumber+'</a>');
 					giorniStampati[giorniStampati.length] = giorno;
 				}
 			});
@@ -239,7 +239,7 @@ function loadMainPage()
 function OnDeviceReady(){
 	valueCookie = window.localStorage.getItem("orsapp_apikey");
 	apiKeyString = JSON.stringify(valueCookie);
-	/*if(apiKeyString!="null")
+	if(apiKeyString!="null")
 	{
 		apiKey = valueCookie;
 		$.ajax({
@@ -257,7 +257,7 @@ function OnDeviceReady(){
 				alert(JSON.stringify(err));
 			}
 		});
-	}*/
+	}
 	$('#login').on('click','.bt_loginProprietario',function(){
 		var mail = $('#txt_email').val();
 		var psw = $('#txt_psw').val();
