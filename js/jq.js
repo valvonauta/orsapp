@@ -270,6 +270,7 @@ function OnDeviceReady(){
 			},
 			success:function(me){
 				window.localStorage.setItem("orsapp_apikey", me['apiKey']);
+				apiKey = me['apiKey'];
 				idUser = me['id'];
 				loadMainPage();
 			},
