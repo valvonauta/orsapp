@@ -2,9 +2,35 @@ var srvAddress = "http://www.ilnostrocalcio.eu/orsapp/server/v1/";
 var apiKey = "";
 var idUser = 0;
 var giorni = ["Domenica","Lunedi","Martedi","Mercoledi","Giovedi","Venerdi","Sabato"];
+var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
+function showLoading(){
+	$.mobile.loading( "show", {
+  text: "Attendi",
+  textVisible: true,
+  theme: "b",
+  html: ""
+});
+}
+function hideLoading(){
+	$.mobile.loading( "hide" );
+}
+function loadPgErrore(msg){
+	$(':mobile-pagecontainer').pagecontainer('change', "#paginaErrore");
+	$('#paginaErroreContent').html(msg);
+}
+function sendMailError(funzione,metodo,err){
+	if(app)
+	{
+		cordova.plugins.email.open({
+			to:      'cittello@gmail.com',
+			subject: 'malfunzionamento in orsapp',
+			body:    'funzione: '+funzione+' ('+metodo+')<br>errore: '+JSON.stringify(err)
+		});
+	}	
+}
 function loadPgSelRepartoAttivita(idturno, dataReparto){
-	$("#pgSelezioneRepartoAttivitaContent").html('Carico le informazioni');
 	$(':mobile-pagecontainer').pagecontainer('change', "#pgSelezioneRepartoAttivita");
+	showLoading();
 	$.ajax({
 		url:srvAddress+'listarepartiattivita',
 		type:"GET",
@@ -22,6 +48,7 @@ function loadPgSelRepartoAttivita(idturno, dataReparto){
 				  'Authorization' :apiKey
 				},			
 				success:function(response){	
+					hideLoading();
 					console.log(response);
 					var repartiattivitasvolti = $.parseJSON(response.repartiattivita);
 					var repartisvolti = repartiattivitasvolti['reparti'];
@@ -45,19 +72,24 @@ function loadPgSelRepartoAttivita(idturno, dataReparto){
 					$('#pgSelezioneRepartoAttivitaContent').trigger('create').listview('refresh');
 				},
 				error:function(error){
-				alert(JSON.stringify(error));
+				hideLoading();
+				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+				sendMailError('repartiattivita/'+idturno+'/'+dataReparto,"GET",JSON.stringify(error));
 				}				
 			});
 		},
 		error:function(err){
+			hideLoading();
+			loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+			sendMailError('listarepartiattivita',"GET",JSON.stringify(err));
 			$("#pgSelezioneRepartoAttivitaContent").html('');
-			alert(JSON.stringify(err));
 		}
 	});
 }
 function loadPgSelRepartoPassato(){
-	$("#pgReferentiRepartoContent").html('Carico le informazioni');
+	//$("#pgReferentiRepartoContent").html('Carico le informazioni');
 	$(':mobile-pagecontainer').pagecontainer('change', "#pgReferentiReparto");
+	showLoading();
 	$.ajax({
 		url: srvAddress+'reparti/'+idUser,
 		method:"GET",
@@ -65,6 +97,7 @@ function loadPgSelRepartoPassato(){
 		  'Authorization' :apiKey
 		},	
 		success:function(resp){
+			hideLoading();
 			var repartiPassati = $.parseJSON(resp.repartipassati);
 			$("#pgReferentiRepartoContent").html('').append('<ul  id="listaRepartiPassati" data-role="listview"></ul>');
 			$.each(repartiPassati,function(index, objRepartoPassato){
@@ -75,8 +108,10 @@ function loadPgSelRepartoPassato(){
 			$('#pgReferentiRepartoContent').trigger('create').listview('refresh');
 		},
 		error:function(err){
-			alert(JSON.stringify(err));
-			$("#pgReferentiRepartoContent").html('');
+			hideLoading();
+			loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+			sendMailError('reparti/'+idUser,"GET",JSON.stringify(err));
+			//$("#pgReferentiRepartoContent").html('reparti/'+idUser,"GET");
 		}
 	});
 	
@@ -100,6 +135,7 @@ function loadPgAggiungiAltriVolontari(idturno,giornoNumerico,giornoTestuale,data
 		  'Authorization' :apiKey
 		},
 		success:function(resp){
+			hideLoading();
 			var utenti = $.parseJSON(resp.users);
 			$('#dtAggiungiAltriVolontariContent').append('<ul id="listaVolontariAggiungibiliReparto" data-role="listview"></ul>');
 			$.each(utenti,function(index,objUtente){
@@ -109,7 +145,9 @@ function loadPgAggiungiAltriVolontari(idturno,giornoNumerico,giornoTestuale,data
 			$('#dtAggiungiAltriVolontariContent').trigger('create').listview('refresh');
 		},
 		error: function(err){
-			alert(JSON.stringify(err));
+			hideLoading();
+			loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+			sendMailError('/utenti/',"GET",JSON.stringify(err));
 		}
 	});
 }
@@ -125,6 +163,7 @@ function loadDtGiornoReparto(giornoNumerico, giornoTestuale, dataReparto)
 {
 	$('#dtGiornoRepartoContent').html('');
 	$(':mobile-pagecontainer').pagecontainer('change', "#dtGiornoReparto");
+	showLoading();
 	var giornoDelMese = moment(dataReparto,"YYYY-MM-DD").format("DD");
 	$('#headerTxtDtGiornoReparto').text(giornoTestuale+' '+giornoDelMese);
 	$.ajax({
@@ -134,6 +173,7 @@ function loadDtGiornoReparto(giornoNumerico, giornoTestuale, dataReparto)
 		  'Authorization' :apiKey
 		},
 		success:function(resp){
+			hideLoading();
 			var copertura = $.parseJSON(resp.copertura);
 			var utenteReferente = 0;
 			$('#dtGiornoRepartoContent').html('<ul data-role="listview" id="listTurniGiornoReparto"></ul>');
@@ -186,7 +226,9 @@ function loadDtGiornoReparto(giornoNumerico, giornoTestuale, dataReparto)
 			$('#dtGiornoRepartoContent').trigger('create').listview('refresh');
 		},
 		error:function(err){
-			JSON.stringify(err)
+			hideLoading();
+			loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+			sendMailError('coverage/'+dataReparto+'/0',"GET",JSON.stringify(err));
 		}
 	});
 	return false;
@@ -203,6 +245,7 @@ function loadMainPage()
 		  'Authorization' :apiKey
 		},
 		success:function(resp){
+			hideLoading();
 			var turni = $.parseJSON(resp.turni);
 			$('#main_page_content').html('<ul data-role="listview" id="listaGiorniReparto"></ul>');
 			$.each(turni, function(index, objTurno){
@@ -224,19 +267,23 @@ function loadMainPage()
 				if(giorniStampati.indexOf(giorno)==-1)
 				{
 					var giornoRepartoNumber = moment(turni[index]['data'],"YYYY-MM-DD").format("DD"); 
-					$('#listaGiorniReparto').append("<li><a href='#dtGiornoReparto' id='linkDtGiornoReparto' data-giornoNumerico='"+objTurno['giorno']+"' data-dataReparto='"+objTurno['data']+"' data-giornoText='"+giornoRepartoText+"'>"+giornoRepartoText+" "+giornoRepartoNumber+'</a>');
+					$('#listaGiorniReparto').append("<li><a href='#dtGiornoReparto' id='linkDtGiornoReparto' data-giornoNumerico='"+objTurno['giorno']+"' data-dataReparto='"+objTurno['data']+"' data-giornoText='"+giornoRepartoText+"'><img src='http://www.ilnostrocalcio.eu/orsapp/client/res/img/calendar.png' style='width:3em;'>"+giornoRepartoText+" "+giornoRepartoNumber+'</a>');
 					giorniStampati[giorniStampati.length] = giorno;
 				}
 			});
 			$('#main_page_content').trigger('create').listview('refresh');
 		},
 		error:function(err){
-			alert(JSON.stringify(err));
+			hideLoading();
+			loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+			sendMailError("turni/","GET",JSON.stringify(err));
 		}
 	});
 	return false;
 }
 function OnDeviceReady(){
+	showLoading();
+	//window.localStorage.removeItem("orsapp_apikey");
 	valueCookie = window.localStorage.getItem("orsapp_apikey");
 	apiKeyString = JSON.stringify(valueCookie);
 	if(apiKeyString!="null")
@@ -254,11 +301,17 @@ function OnDeviceReady(){
 				loadMainPage();
 			},
 			error:function(err){
-				alert(JSON.stringify(err));
+				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+				sendMailError("/me/","GET",JSON.stringify(err));
 			}
 		});
 	}
+	else{
+		hideLoading();
+		$(':mobile-pagecontainer').pagecontainer('change', "#login");
+	}
 	$('#login').on('click','.bt_loginProprietario',function(){
+		showLoading();
 		var mail = $('#txt_email').val();
 		var psw = $('#txt_psw').val();
 		$.ajax({
@@ -275,17 +328,24 @@ function OnDeviceReady(){
 				loadMainPage();
 			},
 			error:function(err){
-				alert(JSON.stringify(err));
+				hideLoading();
+				if(parseInt(err.status)!=403)
+					sendMailError("login","POST",JSON.stringify(err));
+				else
+					loadPgErrore("credenziali errate");
 			}
 		});
 	});
 	$('.navLinkReparto').click(function(){
+		showLoading();
 		loadMainPage();
 	});
 	$('#main_page_content').on('click','#linkDtGiornoReparto',function(){
+		//showLoading();
 		loadDtGiornoReparto($(this).attr('data-giornoNumerico'),$(this).attr('data-giornoText'),$(this).attr('data-dataReparto'));
 	});
 	$('#dtGiornoRepartoContent').on('click','.joinTurno',function(){
+		showLoading();
 		var idturno = parseInt($(this).attr('data-idturno'));
 		var giornoNumerico = $(this).attr('data-giornoNumerico');
 		var giornoTestuale = $(this).attr('data-giornoTestuale');
@@ -300,11 +360,14 @@ function OnDeviceReady(){
 				loadDtGiornoReparto(giornoNumerico,giornoTestuale,dataReparto);
 			},
 			error:function(err){
-				console.log(JSON.stringify(err));
+				hideLoading();
+				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+				sendMailError('/reparto/'+apiKey+'/'+idturno,"POST",JSON.stringify(err));
 			}
 		});
 	});
 	$('#dtGiornoRepartoContent').on('click','.deleteFromTurno',function(){
+		showLoading();
 		var idturno = parseInt($(this).attr('data-idturno'));
 		var giornoNumerico = $(this).attr('data-giornoNumerico');
 		var giornoTestuale = $(this).attr('data-giornoTestuale');
@@ -319,11 +382,14 @@ function OnDeviceReady(){
 				loadDtGiornoReparto(giornoNumerico,giornoTestuale,dataReparto);
 			},
 			error:function(err){
-				console.log(JSON.stringify(err));
+				hideLoading();
+				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+				sendMailError('/reparto/'+apiKey+'/'+idturno,"DELETE",JSON.stringify(err));
 			}
 		});
 	});
 	$('#dtGiornoRepartoContent').on('click','.deleteVolontarioFromTurno',function(){
+		showLoading();
 		var idturno = parseInt($(this).attr('data-idturno'));
 		var giornoNumerico = $(this).attr('data-giornoNumerico');
 		var giornoTestuale = $(this).attr('data-giornoTestuale');
@@ -347,17 +413,21 @@ function OnDeviceReady(){
 						loadDtGiornoReparto(giornoNumerico,giornoTestuale,dataReparto);
 					},
 					error:function(err){
-						console.log(JSON.stringify(err));
+						hideLoading();
+						loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+						sendMailError('/reparto/'+apikeyVolontario+'/'+idturno,"DELETE",JSON.stringify(err));
 					}
 				});	
 			},
 			error:function(err){
-				console.log(JSON.stringify(err));
+				hideLoading();
+				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+				sendMailError('/apikey/'+idVolontario,"GET",JSON.stringify(err));
 			}
 		});		
 	});
 	$('#dtGiornoRepartoContent').on('click','.addOtherUserTurno',function(){
-		//$(':mobile-pagecontainer').pagecontainer('change', "#pgAggiungiAltriVolontari");
+		showLoading();
 		var idturno = parseInt($(this).attr('data-idturno'));
 		var giornoNumerico = $(this).attr('data-giornoNumerico');
 		var giornoTestuale = $(this).attr('data-giornoTestuale');
@@ -405,6 +475,7 @@ function OnDeviceReady(){
 		});
 		if(idVolontariDaAggiungere['volontari'].length)
 		{
+			showLoading();
 			//alert(idVolontariDaAggiungere);
 			var idVolontariDaAggiungereString = JSON.stringify(idVolontariDaAggiungere);
 			console.log(idVolontariDaAggiungereString);
@@ -422,7 +493,9 @@ function OnDeviceReady(){
 					loadMainPage();	
 				},
 				error:function(err){
-					alert(JSON.stringify(err));
+					hideLoading();
+					loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+					sendMailError('multiplo/reparto/'+idturno,"POST",JSON.stringify(err));
 				}
 			});
 		}
@@ -434,6 +507,7 @@ function OnDeviceReady(){
 		}
 	});
 	$("#pgReferentiRepartoContent").on('click','.linkSelRepartoPassato',function(){
+		showLoading();
 		var idturno = $(this).parent().attr('data-idturno');
 		var dataReparto = $(this).parent().attr('data-dataReparto');
 		loadPgSelRepartoAttivita(idturno,dataReparto);
@@ -450,6 +524,7 @@ function OnDeviceReady(){
 		}
 	});
 	$('#footerPgSelezioneRepartoAttivita').on('click','#btSalvaPgSelezioneRepartoAttivita',function(){
+		showLoading();
 		var reparti=[];
 		var attivita=[];
 		$.each($('.linkSelRepartoAttivita').parent(),function(){
@@ -486,7 +561,9 @@ function OnDeviceReady(){
 				loadMainPage();
 			},
 			error:function(err){
-				alert(JSON.stringify(err));
+				hideLoading();
+				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+				sendMailError("repartiattivita","POST",JSON.stringify(err));
 			}
 		});
 	});
