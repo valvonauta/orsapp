@@ -120,7 +120,7 @@ function loadPgSelRepartoPassato(){
 		},
 		error:function(err){
 			hideLoading();
-			if(parseInt(err.status!=403)
+			if(parseInt(err.status!=403))
 			{
 				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
 				sendMailError('reparti/'+idUser,"GET",JSON.stringify(err));
