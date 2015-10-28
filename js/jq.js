@@ -120,8 +120,15 @@ function loadPgSelRepartoPassato(){
 		},
 		error:function(err){
 			hideLoading();
-			loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
-			sendMailError('reparti/'+idUser,"GET",JSON.stringify(err));
+			if(parseInt(err.status!=403)
+			{
+				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+				sendMailError('reparti/'+idUser,"GET",JSON.stringify(err));
+			}
+			else
+			{
+				loadMainPage();
+			}
 			//$("#pgReferentiRepartoContent").html('reparti/'+idUser,"GET");
 		}
 	});
