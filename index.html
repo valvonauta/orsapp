@@ -23,7 +23,7 @@
     <input type="text" name="name" id="txt_email" class='login_form_input' value=""  />
 <label for="txt_psw">Password:</label>
     <input type="password" name="name" id="txt_psw" class='login_form_input' value=""  />
-	<a href='#ResetPsw' id='linkResPsw'>Password dimenticata?</a>
+	<a href='#ResetPsw' id='linkRecuperoPsw'>Recupero password</a>
 <a href="#" class='bt_loginProprietario show-page-loading-msg' data-textonly='false' data-textvisible='true' data-msgtext='Attendi' data-role="button">Login</a>
 <div class="alert alert-danger divGenericError" role="alert" style='display:none;'>
 <strong>Si e' verificato un errore, perfavore prova piu' tardi</strong>
@@ -40,8 +40,8 @@
 <div data-role="navbar" data-iconpos="bottom" data-theme="b">
 	<ul>
 		<li><a href="#main_page" class="ui-btn-active ui-state-persist navLinkReparto" data-icon="refresh">Reparto</a></li>
-		<li><a href="#main_page" data-icon="refresh">Eventi</a></li>
-		<li><a href="#main_page" data-icon="refresh">Tana</a></li>
+		<!--<li><a href="#main_page" data-icon="refresh">Eventi</a></li>
+		<li><a href="#main_page" data-icon="refresh">Tana</a></li>!-->
 	</ul>
 </div><!-- /navbar -->
 </div>
@@ -93,6 +93,17 @@
 <h1 id='headerTxtPaginaErrore'>ORSAPP</h1><a href="#" data-icon="back" data-rel="back" title="Go back">Indietro</a>
 </div>
 <div id='paginaErroreContent' data-role="content" class="ui-content">
+</div>
+</div>
+<!----pagina di recupero password!-->
+<div data-role="page" id="pgRecuperoPassword">
+<div data-role="header" style="height:3em;" id='headerpgRecuperoPassword'>
+<h1 id='headerTxtpgRecuperoPassword'>ORSAPP</h1><a href="#" data-icon="back" data-rel="back" title="Go back">Indietro</a>
+</div>
+<div id='pgRecuperoPasswordContent' data-role="content" class="ui-content">
+<label for="mailField">La tua mail:</label>
+    <input type="text" name="mailField" id="mailField" value=""  />
+	<a href="#" class="ui-btn ui-disabled btRecuperaPassword">Inviami la password</a>
 </div>
 </div>
 </body>

@@ -3,6 +3,10 @@ var apiKey = "";
 var idUser = 0;
 var giorni = ["Domenica","Lunedi","Martedi","Mercoledi","Giovedi","Venerdi","Sabato"];
 var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
+function validateEmail(email) {
+    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    return re.test(email);
+}
 function showLoading(){
 	$.mobile.loading( "show", {
   text: "Attendi",
@@ -17,6 +21,13 @@ function hideLoading(){
 function loadPgErrore(msg){
 	$(':mobile-pagecontainer').pagecontainer('change', "#paginaErrore");
 	$('#paginaErroreContent').html(msg);
+}
+function loadPgRecuperoPassword()
+{
+	$('#pgRecuperoPasswordContent').find($('.infoText')).remove();
+	$('#pgRecuperoPasswordContent').find($('#mailField')).val('');	
+	$(':mobile-pagecontainer').pagecontainer('change','#pgRecuperoPassword');
+	return false;
 }
 function sendMailError(funzione,metodo,err){
 	if(app)
@@ -301,8 +312,16 @@ function OnDeviceReady(){
 				loadMainPage();
 			},
 			error:function(err){
-				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
-				sendMailError("/me/","GET",JSON.stringify(err));
+				if(parseInt(err.status!=401))
+				{
+					loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+					sendMailError("/me/","GET",JSON.stringify(err));
+				}
+				else
+				{
+					window.localStorage.removeItem("orsapp_apikey");
+					hideLoading();
+				}
 			}
 		});
 	}
@@ -564,6 +583,45 @@ function OnDeviceReady(){
 				hideLoading();
 				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
 				sendMailError("repartiattivita","POST",JSON.stringify(err));
+			}
+		});
+	});
+	$('#linkRecuperoPsw').click(function(){
+		loadPgRecuperoPassword();
+	});
+	$('#pgRecuperoPasswordContent').on('keyup','#mailField',function(){
+		if(validateEmail($(this).val()))
+			$('.btRecuperaPassword').removeClass('ui-disabled');
+		else
+		{
+			if(!$(this).hasClass('ui-disabled'))
+				$('.btRecuperaPassword').addClass('ui-disabled');
+		}
+	});
+	$('.btRecuperaPassword').click(function(){
+		showLoading();
+		var emailAddress = $('#mailField').val();
+		$.ajax({
+			url: srvAddress+'password',
+			type:"POST",
+			data:{
+				'email':emailAddress
+			},
+			success:function(resp){
+				hideLoading();
+				$('#pgRecuperoPasswordContent').append('<p class="infoText">Attendi la mail con la nuova password, premi indietro (in alto) per tornare alla schermata di login</p>');
+			},
+			error: function(err){
+				hideLoading();
+				if(err.status!=404)
+				{
+					loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+					sendMailError('repartiattivita/'+idturno+'/'+dataReparto,"GET",JSON.stringify(error));
+				}
+				else
+				{
+					$('#pgRecuperoPasswordContent').append('<p class="infoText">La tua mail non è nel database, se pensi sia un errore puoi scrivere a cittello@gmail.com indicando come contattarti per risolvere il problema</p>');					
+				}
 			}
 		});
 	});
