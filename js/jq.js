@@ -65,7 +65,7 @@ function loadPgSelRepartoAttivita(idturno, dataReparto){
 					var repartisvolti = repartiattivitasvolti['reparti'];
 					var attivitasvolte = repartiattivitasvolti['attivita'];
 					$("#pgSelezioneRepartoAttivitaContent").html('');
-					$("#pgSelezioneRepartoAttivitaContent").append('<ul id="listaRepartiAttivita" data-filter="true" data-filter-placeholder="cerca" data-role="listview" data-idturno="'+idturno+'" data-datareparto="'+dataReparto+'"></ul>');
+					$("#pgSelezioneRepartoAttivitaContent").append('<ul id="listaRepartiAttivita" data-role="listview" data-idturno="'+idturno+'" data-datareparto="'+dataReparto+'"></ul>');
 					$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-role='list-divider' role='heading'>Reparti</li>");
 					$.each(reparti,function(index, objReparto){
 						$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-icon='false' data-checked='0' data-idreparto='"+objReparto['id_reparto']+"'><a href='#' class='linkSelRepartoAttivita linkSelReparto'>"+objReparto['reparto']+"</a></li>");
@@ -155,7 +155,7 @@ function loadPgAggiungiAltriVolontari(idturno,giornoNumerico,giornoTestuale,data
 		success:function(resp){
 			hideLoading();
 			var utenti = $.parseJSON(resp.users);
-			$('#dtAggiungiAltriVolontariContent').append('<ul data-filter="true" data-filter-placeholder="cerca" id="listaVolontariAggiungibiliReparto" data-role="listview"></ul>');
+			$('#dtAggiungiAltriVolontariContent').append('<ul id="listaVolontariAggiungibiliReparto" data-role="listview"></ul>');
 			$.each(utenti,function(index,objUtente){
 				if(volontariSegnatiArray.indexOf(parseInt(objUtente['id_user']))==-1)
 					$('#listaVolontariAggiungibiliReparto').append("<li data-icon='false'><a href='#' class='linkSelVolontarioReparto' data-idvolontario='"+objUtente['id_user']+"' data-idturno='"+idturno+"' data-checked='0'>"+objUtente['lastname']+" "+objUtente['firstname']+"</a></li>");
