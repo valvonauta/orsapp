@@ -16,9 +16,12 @@
 <script type="text/javascript" src="js/jq.js"></script>
 <title>PhoneGap Android App</title>    
 </head>
-<body>
+<body> 
 <!-- pagina login!-->
 <div data-role="page" id="login">
+<div data-role="header" data-position="fixed">
+<h1>ORSAPP</h1>
+</div>
 <div id='contenuto' data-role="content" class="ui-content">
 <label for="txt_email">Email:</label>
     <input type="text" name="name" id="txt_email" class='login_form_input' value=""  />
@@ -85,7 +88,7 @@
 <div id='pgSelezioneRepartoAttivitaContent' data-role="content" class="ui-content">
 </div>
 <div data-role="footer" id='footerPgSelezioneRepartoAttivita' data-position='fixed'>
-<center><a href="#" data-role="button" data-icon="false" id='btSalvaPgSelezioneRepartoAttivita' data-idturno="0" data-dataReparto="1970-01-01">salva</a></center>
+<center><a href="#" data-role="button" data-icon="false" id='btSalvaPgSelezioneRepartoAttivita' class="ui-disabled" data-idturno="0" data-dataReparto="1970-01-01">salva</a></center>
 </div>
 </div>
 <!----pagina di errore!-->
@@ -104,7 +107,15 @@
 <div id='pgRecuperoPasswordContent' data-role="content" class="ui-content">
 <label for="mailField">La tua mail:</label>
     <input type="text" name="mailField" id="mailField" value=""  />
-	<a href="#" class="ui-btn ui-disabled btRecuperaPassword">Inviami la password</a>
+	<a href="#" class="ui-btn btRecuperaPassword">Inviami la password</a>
+</div>
+</div>
+<!--pagina i tuoi impegni!-->
+<div data-role="page" id="pgMieiImpegni">
+<div data-role="header" style="height:3em;" id='headerpgMieiImpegni'>
+<h1 id='headerTxtpgMieiImpegni'>ORSAPP</h1><a href="#" data-icon="back" data-rel="back" title="Go back">Indietro</a>
+</div>
+<div id='pgMieiImpegniContent' data-role="content" class="ui-content">
 </div>
 </div>
 </body>

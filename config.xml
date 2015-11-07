@@ -2,15 +2,15 @@
 	<widget xmlns = "http://www.w3.org/ns/widgets"
 		xmlns:gap = "http://phonegap.com/ns/1.0"
 		id        = "com.orsapp.mquadro"
-		versionCode="0.0.1"
-		version   = "0.0.1">
+		versionCode="3"
+		version   = "0.0.2">
 		<name>orsapp</name>
 		<description>
 		</description>
 		<author href="" email="">
 
 		</author>
-		<icon src="iconApp.png" />
+		<icon src="iconapp.png" />
 		<preference name="phonegap-version" value="3.7.0" />
 		<preference name="orientation" value="default" />
 		<preference name="fullscreen" value="false" />

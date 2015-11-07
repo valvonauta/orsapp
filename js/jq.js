@@ -18,6 +18,35 @@ function showLoading(){
 function hideLoading(){
 	$.mobile.loading( "hide" );
 }
+function loadPageMieiImpegni(){
+	showLoading();
+	$(':mobile-pagecontainer').pagecontainer('change', "#pgMieiImpegni");
+	$('#pgMieiImpegniContent').html('');
+	$.ajax({
+		url: srvAddress+'impegni',
+		type: 'GET',
+		headers: {
+		  'Authorization' :apiKey
+		},			
+		success:function(resp){
+			var repartiFuturi = resp.repartiFuturi;
+			var repartiFuturiArray = $.parseJSON(repartiFuturi);
+			console.log(repartiFuturiArray);
+			hideLoading();
+			$("#pgMieiImpegniContent").append('<ul id="listaImpegniFuturi" data-role="listview"></ul>');
+			$.each(repartiFuturiArray,function(index,objRepartoFuturo){
+				$("#listaImpegniFuturi").append("<li>Reparto "+moment(objRepartoFuturo['data'],"YYYY-MM-DD").format("DD-MM-YYYY")+" "+moment(objRepartoFuturo['orainizio'],"HH:mm:ss").format("HH:mm")+" - "+moment(objRepartoFuturo['orafine'],"HH:mm:ss").format("HH:mm")+"</li>");
+			});
+			$('#pgMieiImpegniContent').trigger('create').listview('refresh');
+		},
+		error: function(err){
+			hideLoading();
+			loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+			sendMailError('impegni',"GET",JSON.stringify(err));
+			$("#pgMieiImpegniContent").html('');			
+		}
+	});
+}
 function loadPgErrore(msg){
 	$(':mobile-pagecontainer').pagecontainer('change', "#paginaErrore");
 	$('#paginaErroreContent').html(msg);
@@ -43,57 +72,94 @@ function loadPgSelRepartoAttivita(idturno, dataReparto){
 	$(':mobile-pagecontainer').pagecontainer('change', "#pgSelezioneRepartoAttivita");
 	showLoading();
 	$.ajax({
-		url:srvAddress+'listarepartiattivita',
+		url:srvAddress+'/coverage/'+dataReparto+'/0',
 		type:"GET",
 		headers: {
 		  'Authorization' :apiKey
-		},			
-		success:function(resp){
-			var repartiattivita = $.parseJSON(resp.repartiattivita);
-			var reparti = repartiattivita['reparti'];
-			var attivita = repartiattivita['attivita'];
+		},		
+		success:function(coverageResp){
+			var coverage = coverageResp.copertura;
+			var copertura = $.parseJSON(coverage);
+			var coperturaTurno = copertura[dataReparto][parseInt(idturno)];
+			var volontari = coperturaTurno['volontari'];
+			$("#pgSelezioneRepartoAttivitaContent").html('');
+			$("#pgSelezioneRepartoAttivitaContent").append('<ul id="listaRepartiAttivita" data-filter="true" data-filter-placeholder="cerca" data-role="listview" data-idturno="'+idturno+'" data-datareparto="'+dataReparto+'"></ul>');
 			$.ajax({
-				url: srvAddress+'repartiattivita/'+idturno+'/'+dataReparto,
-				method:"GET",
+				url:srvAddress+'listarepartiattivita',
+				type:"GET",
 				headers: {
 				  'Authorization' :apiKey
 				},			
-				success:function(response){	
-					hideLoading();
-					console.log(response);
-					var repartiattivitasvolti = $.parseJSON(response.repartiattivita);
-					var repartisvolti = repartiattivitasvolti['reparti'];
-					var attivitasvolte = repartiattivitasvolti['attivita'];
-					$("#pgSelezioneRepartoAttivitaContent").html('');
-					$("#pgSelezioneRepartoAttivitaContent").append('<ul id="listaRepartiAttivita" data-filter="true" data-filter-placeholder="cerca" data-role="listview" data-idturno="'+idturno+'" data-datareparto="'+dataReparto+'"></ul>');
-					$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-role='list-divider' role='heading'>Reparti</li>");
-					$.each(reparti,function(index, objReparto){
-						$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-icon='false' data-checked='0' data-idreparto='"+objReparto['id_reparto']+"'><a href='#' class='linkSelRepartoAttivita linkSelReparto'>"+objReparto['reparto']+"</a></li>");
+				success:function(resp){
+					var repartiattivita = $.parseJSON(resp.repartiattivita);
+					var reparti = repartiattivita['reparti'];
+					var attivita = repartiattivita['attivita'];
+					$.ajax({
+						url: srvAddress+'repartiattivita/'+idturno+'/'+dataReparto,
+						method:"GET",
+						headers: {
+						  'Authorization' :apiKey
+						},			
+						success:function(response){
+							var repartiattivitasvolti = $.parseJSON(response.repartiattivita);
+							var repartisvolti = repartiattivitasvolti['reparti'];
+							var attivitasvolte = repartiattivitasvolti['attivita'];
+							//var unVolontarioConfermato = 0;
+							$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-role='list-divider' role='heading'>Volontari</li>");			
+							$.each(volontari,function(idVolontario,cognomeNome){
+								$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-icon='false' data-checked='0' data-idVolontario='"+idVolontario+"'><a href='#' class='linkSelRepartoAttivita linkConfermaVolontario'>"+cognomeNome+"</a></li>");		
+							});
+							$.each(coperturaTurno['confermata'], function(idVolontario,boolConfermata){
+								if(parseInt(boolConfermata)){
+									$("li[data-idVolontario='"+idVolontario+"']").attr('data-checked','1').find("a").css("background","#00FF33");
+									//unVolontarioConfermato = 1;
+								}
+							});
+							$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-role='list-divider' role='heading'>Reparti</li>");
+							$.each(reparti,function(index, objReparto){
+								$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-icon='false' data-checked='0' data-idreparto='"+objReparto['id_reparto']+"'><a href='#' class='linkSelRepartoAttivita linkSelReparto'>"+objReparto['reparto']+"</a></li>");
+							});
+							$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-role='list-divider' role='heading'>Attivita</li>");
+							$.each(attivita,function(index, objAttivita){
+								$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-icon='false' data-checked='0' data-idattivita='"+objAttivita['id_attivitaospedale']+"'><a href='#' class='linkSelRepartoAttivita linkSelAttivita'>"+objAttivita['attivita']+"</a></li>");
+							});
+							$.each(repartisvolti, function(index, idreparto){
+								$("li[data-idreparto='"+idreparto+"']").attr('data-checked','1').find("a").css("background","#00FF33");
+							});
+							$.each(attivitasvolte, function(index, idattivita){
+								$("li[data-idattivita='"+idattivita+"']").attr('data-checked','1').find("a").css("background","#00FF33");
+							});
+							hideLoading();
+							/*if(!unVolontarioConfermato)
+							{
+								$('#btSalvaPgSelezioneRepartoAttivita').addClass('ui-disabled');
+							}	
+							else
+							{
+								$('#btSalvaPgSelezioneRepartoAttivita').removeClass('ui-disabled');
+							}	*/
+							$('#pgSelezioneRepartoAttivitaContent').trigger('create').listview('refresh');
+						},
+						error:function(error){
+						hideLoading();
+						loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+						sendMailError('repartiattivita/'+idturno+'/'+dataReparto,"GET",JSON.stringify(error));
+						}				
 					});
-					$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-role='list-divider' role='heading'>Attivita</li>");
-					$.each(attivita,function(index, objAttivita){
-						$("#pgSelezioneRepartoAttivitaContent").find($('#listaRepartiAttivita')).append("<li data-icon='false' data-checked='0' data-idattivita='"+objAttivita['id_attivitaospedale']+"'><a href='#' class='linkSelRepartoAttivita linkSelAttivita'>"+objAttivita['attivita']+"</a></li>");
-					});
-					$.each(repartisvolti, function(index, idreparto){
-						$("li[data-idreparto='"+idreparto+"']").attr('data-checked','1').find("a").css("background","#00FF33");
-					});
-					$.each(attivitasvolte, function(index, idattivita){
-						$("li[data-idattivita='"+idattivita+"']").attr('data-checked','1').find("a").css("background","#00FF33");
-					});
-					$('#pgSelezioneRepartoAttivitaContent').trigger('create').listview('refresh');
 				},
-				error:function(error){
-				hideLoading();
-				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
-				sendMailError('repartiattivita/'+idturno+'/'+dataReparto,"GET",JSON.stringify(error));
-				}				
+				error:function(err){
+					hideLoading();
+					loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+					sendMailError('listarepartiattivita',"GET",JSON.stringify(err));
+					$("#pgSelezioneRepartoAttivitaContent").html('');
+				}
 			});
 		},
-		error:function(err){
+		error:function(errorCoverage){
 			hideLoading();
 			loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
-			sendMailError('listarepartiattivita',"GET",JSON.stringify(err));
-			$("#pgSelezioneRepartoAttivitaContent").html('');
+			sendMailError('coverage',"GET",JSON.stringify(errorCoverage));
+			$("#pgSelezioneRepartoAttivita").html('');				
 		}
 	});
 }
@@ -110,10 +176,9 @@ function loadPgSelRepartoPassato(){
 		success:function(resp){
 			hideLoading();
 			var repartiPassati = $.parseJSON(resp.repartipassati);
+			console.log(repartiPassati);
 			$("#pgReferentiRepartoContent").html('').append('<ul  id="listaRepartiPassati" data-role="listview"></ul>');
 			$.each(repartiPassati,function(index, objRepartoPassato){
-			/*<li data-role="collapsible" data-iconpos="right" data-inset="true"><h2>'+orarioVolontariReferenti['orario']+'<span class="ui-li-count ui-btn-up-c ui-btn-corner-all counterVolontariTurno 
-			'+idturno+'">0</span></h2><ul data-role="listview" class="dtTurnoReparto '+idturno+'"></ul></li>*/
 				$("#pgReferentiRepartoContent").find($('#listaRepartiPassati')).append('<li data-iconpos="right" data-inset="true" data-dataReparto="'+objRepartoPassato['data']+'" data-idturno="'+objRepartoPassato['idturno']+'"><a href="#" class="linkSelRepartoPassato">'+moment(objRepartoPassato['data'],"YYYY-MM-DD").format("DD-MM-YYYY")+' '+objRepartoPassato['orainizio']+'</a></li>')
 			});
 			$('#pgReferentiRepartoContent').trigger('create').listview('refresh');
@@ -266,10 +331,9 @@ function loadMainPage()
 			hideLoading();
 			var turni = $.parseJSON(resp.turni);
 			$('#main_page_content').html('<ul data-role="listview" id="listaGiorniReparto"></ul>');
+			$('#listaGiorniReparto').append("<li><a href='#' id='linkImpegniFuturi'>I tuoi impegni</a></li>");
+			$('#listaGiorniReparto').append("<li data-role='list-divider' role='heading' class='ui-li-divider ui-bar-inherit ui-first-child'>Calendario</li>");
 			$.each(turni, function(index, objTurno){
-				//var orainizio = moment(objTurno['orainizio'],"HH:mm:ss").format("HH:mm");
-				//var orafine = moment(objTurno['orafine'],"HH:mm:ss").format("HH:mm");
-			//	var giornoRepartoText = giorni[objTurno['giorno']];
 				var giorno = objTurno['giorno'];
 				if(objTurno['giorno']<moment().day())
 					giorno+=7;
@@ -548,33 +612,56 @@ function OnDeviceReady(){
 			$(this).parent().attr('data-checked','1');
 			$(this).css('background','#00FF33');		
 		}
+		/*if($(this).hasClass('linkConfermaVolontario'))
+		{*/
+			var volontariConfermati = 0;
+			var repartiAttivitaSelezionati = 0;
+			$.each($('#pgSelezioneRepartoAttivitaContent').find($('.linkSelRepartoAttivita')),function(){
+				if(parseInt($(this).parent().attr('data-checked'))){
+					if($(this).hasClass('linkConfermaVolontario'))
+					{
+						volontariConfermati = 1;
+					}
+					else
+						repartiAttivitaSelezionati = 1;
+				}
+			});
+			if(volontariConfermati == repartiAttivitaSelezionati)
+				$('#btSalvaPgSelezioneRepartoAttivita').removeClass('ui-disabled');
+			else
+				$('#btSalvaPgSelezioneRepartoAttivita').addClass('ui-disabled');
+		//}
 	});
 	$('#footerPgSelezioneRepartoAttivita').on('click','#btSalvaPgSelezioneRepartoAttivita',function(){
 		showLoading();
 		var reparti=[];
 		var attivita=[];
+		var volontari = [];
 		$.each($('.linkSelRepartoAttivita').parent(),function(){
 			if(parseInt($(this).attr('data-checked'))){
-				if(typeof $(this).attr('data-idreparto') === 'undefined')
+				if(typeof $(this).attr('data-idreparto') === 'undefined' && typeof $(this).attr('data-idVolontario') === 'undefined')
 				{
 					attivita[attivita.length] = $(this).attr('data-idattivita');
 				}
-				else
+				else if (typeof $(this).attr('data-idattivita') === 'undefined' && typeof $(this).attr('data-idVolontario') === 'undefined')
 				{
 					reparti[reparti.length] = $(this).attr('data-idreparto');					
 				}
+				else
+					volontari[volontari.length] = $(this).attr('data-idVolontario');
 			}
 		});
-		var repartiattivita = {};
-		repartiattivita['reparti'] = reparti;
-		repartiattivita['attivita'] = attivita;
+		var repartiattivitavolontari = {};
+		repartiattivitavolontari['reparti'] = reparti;
+		repartiattivitavolontari['attivita'] = attivita;
+		repartiattivitavolontari['volontari'] = volontari;
 		var dataReparto = $("#pgSelezioneRepartoAttivita").find($("#listaRepartiAttivita")).attr('data-dataReparto');
 		var idturno = $("#pgSelezioneRepartoAttivita").find($("#listaRepartiAttivita")).attr('data-idturno');
-		repartiattivita['datareparto'] = dataReparto;
-		repartiattivita['idturno'] = idturno;
-		var repartiattivitaString = JSON.stringify(repartiattivita);
+		repartiattivitavolontari['datareparto'] = dataReparto;
+		repartiattivitavolontari['idturno'] = idturno;
+		var repartiattivitavolontariString = JSON.stringify(repartiattivitavolontari);
 		$.ajax({
-			url: srvAddress+"repartiattivita",
+			url: srvAddress+"repartiattivitavolontari",
 			type:"POST",				
 			headers: {
 				  'Authorization' :apiKey
@@ -582,55 +669,57 @@ function OnDeviceReady(){
 			accept: "*/*",
 			dataType:"json",
 			contentType:"application/json",
-			data: repartiattivitaString,
+			data: repartiattivitavolontariString,
 			success:function(resp){
 				loadMainPage();
 			},
 			error:function(err){
 				hideLoading();
 				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
-				sendMailError("repartiattivita","POST",JSON.stringify(err));
+				sendMailError("repartiattivitavolontari","POST",JSON.stringify(err));
 			}
 		});
 	});
 	$('#linkRecuperoPsw').click(function(){
 		loadPgRecuperoPassword();
 	});
-	$('#pgRecuperoPasswordContent').on('keyup','#mailField',function(){
-		if(validateEmail($(this).val()))
-			$('.btRecuperaPassword').removeClass('ui-disabled');
-		else
-		{
-			if(!$(this).hasClass('ui-disabled'))
-				$('.btRecuperaPassword').addClass('ui-disabled');
-		}
-	});
 	$('.btRecuperaPassword').click(function(){
 		showLoading();
 		var emailAddress = $('#mailField').val();
-		$.ajax({
-			url: srvAddress+'password',
-			type:"POST",
-			data:{
-				'email':emailAddress
-			},
-			success:function(resp){
-				hideLoading();
-				$('#pgRecuperoPasswordContent').append('<p class="infoText">Attendi la mail con la nuova password, premi indietro (in alto) per tornare alla schermata di login</p>');
-			},
-			error: function(err){
-				hideLoading();
-				if(err.status!=404)
-				{
-					loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
-					sendMailError('repartiattivita/'+idturno+'/'+dataReparto,"GET",JSON.stringify(error));
+		$('#pgRecuperoPasswordContent').find($('.infoText')).remove();
+		if(validateEmail(emailAddress)){
+			$.ajax({
+				url: srvAddress+'password',
+				type:"POST",
+				data:{
+					'email':emailAddress
+				},
+				success:function(resp){
+					hideLoading();
+					$('#pgRecuperoPasswordContent').append('<p class="infoText">Attendi la mail con la nuova password, premi indietro (in alto) per tornare alla schermata di login</p>');
+				},
+				error: function(err){
+					hideLoading();
+					if(err.status!=404)
+					{
+						loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+						sendMailError('repartiattivita/'+idturno+'/'+dataReparto,"GET",JSON.stringify(error));
+					}
+					else
+					{
+						$('#pgRecuperoPasswordContent').append('<p class="infoText">La tua mail non è nel database, se pensi sia un errore puoi scrivere a cittello@gmail.com indicando come contattarti per risolvere il problema</p>');					
+					}
 				}
-				else
-				{
-					$('#pgRecuperoPasswordContent').append('<p class="infoText">La tua mail non è nel database, se pensi sia un errore puoi scrivere a cittello@gmail.com indicando come contattarti per risolvere il problema</p>');					
-				}
-			}
-		});
+			});
+		}
+		else
+		{
+			hideLoading();
+			$('#pgRecuperoPasswordContent').append('<p class="infoText">Indirizzo mail non valido</p>');							
+		}
+	});
+	$('#main_page').on('click','#linkImpegniFuturi',function(){
+		loadPageMieiImpegni();
 	});
 }
 document.addEventListener("deviceready", OnDeviceReady, false);
