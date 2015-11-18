@@ -201,6 +201,7 @@ function loadPgSelRepartoPassato(){
 }
 function loadPgAggiungiAltriVolontari(idturno,giornoNumerico,giornoTestuale,dataReparto,volontariSegnati)
 {
+	$('#btSalvaAggiungiVolontariReparto').attr('data-dataReparto',dataReparto);
 	$(':mobile-pagecontainer').pagecontainer('change', "#pgAggiungiAltriVolontari");
 	$('#dtAggiungiAltriVolontariContent').html('');
 	$('#footerAggiungiVolontario').hide('');
@@ -333,14 +334,13 @@ function loadMainPage()
 			$('#main_page_content').html('<ul data-role="listview" id="listaGiorniReparto"></ul>');
 			$('#listaGiorniReparto').append("<li><a href='#' id='linkImpegniFuturi'>I tuoi impegni</a></li>");
 			$('#listaGiorniReparto').append("<li data-role='list-divider' role='heading' class='ui-li-divider ui-bar-inherit ui-first-child'>Calendario</li>");
-			$.each(turni, function(index, objTurno){
+			/*$.each(turni, function(index, objTurno){
 				var giorno = objTurno['giorno'];
 				if(objTurno['giorno']<moment().day())
 					giorno+=7;
 				turni[index]['data'] = moment().day(giorno).format("YYYY-MM-DD");	
 			});
 			turni.sort(ordinaperdata);
-			var giorniStampati = [];
 			$.each(turni, function(index, objTurno){
 				var orainizio = moment(objTurno['orainizio'],"HH:mm:ss").format("HH:mm");
 				var orafine = moment(objTurno['orafine'],"HH:mm:ss").format("HH:mm");
@@ -351,6 +351,43 @@ function loadMainPage()
 					var giornoRepartoNumber = moment(turni[index]['data'],"YYYY-MM-DD").format("DD"); 
 					$('#listaGiorniReparto').append("<li><a href='#dtGiornoReparto' id='linkDtGiornoReparto' data-giornoNumerico='"+objTurno['giorno']+"' data-dataReparto='"+objTurno['data']+"' data-giornoText='"+giornoRepartoText+"'><img src='http://www.ilnostrocalcio.eu/orsapp/client/res/img/calendar.png' style='width:3em;'>"+giornoRepartoText+" "+giornoRepartoNumber+'</a>');
 					giorniStampati[giorniStampati.length] = giorno;
+				}
+			});*/
+			//le due variabili sotto regolano quanti giorni indietro e quanti avanti mostrare nella finestra di selezione giorno
+			var giorniIndietro = 2; 
+			var giorniAvanti= 7;
+			var dataInizio = moment().subtract(giorniIndietro,'days').format("YYYY-MM-DD");
+			var dataFine = moment().add(giorniAvanti,'days').format("YYYY-MM-DD");
+			var giorniDaStampare = [];
+			var ultimoGiornoStampato = -1;
+			var scorriGiorni = 0;
+			for(i = dataInizio; moment(i,"YYYY-MM-DD").isBefore(dataFine); i = moment(i,"YYYY-MM-DD").add(1,'days')){
+				var giornoCorrente = parseInt(moment(i,"YYYY-MM-DD").format('d'));
+				$.each(turni, function(index,objTurno){
+					if(parseInt(objTurno['giorno']) == giornoCorrente)
+					{
+						giorniDaStampare[scorriGiorni] = {};
+						giorniDaStampare[scorriGiorni]['data'] = moment(i,"YYYY-MM-DD").format("YYYY-MM-DD");
+						giorniDaStampare[scorriGiorni]['giorno'] = objTurno['giorno'];
+						giorniDaStampare[scorriGiorni]['orafine'] = objTurno['orafine'];
+						giorniDaStampare[scorriGiorni]['orainizio'] = objTurno['orainizio'];
+						giorniDaStampare[scorriGiorni]['id_turnireparto'] = objTurno['id_turnireparto'];
+						scorriGiorni++;
+					}
+				});
+			}
+			giorniDaStampare.sort(ordinaperdata);
+			$.each(giorniDaStampare, function(index, objGiorno){
+				var orainizio = moment(objGiorno['orainizio'],"HH:mm:ss").format("HH:mm");
+				var orafine = moment(objGiorno['orafine'],"HH:mm:ss").format("HH:mm");
+				var giornoRepartoText = giorni[objGiorno['giorno']];
+				var giorno = objGiorno['giorno'];
+				if(giorno!=ultimoGiornoStampato)
+				{
+					var giornoRepartoNumber = moment(giorniDaStampare[index]['data'],"YYYY-MM-DD").format("DD"); 
+					$('#listaGiorniReparto').append("<li><a href='#dtGiornoReparto' id='linkDtGiornoReparto' data-giornoNumerico='"+objGiorno['giorno']+"' data-dataReparto='"+objGiorno['data']+"' data-giornoText='"+giornoRepartoText+"'><img src='http://www.ilnostrocalcio.eu/orsapp/client/res/img/calendar.png' style='width:3em;'>"+giornoRepartoText+" "+giornoRepartoNumber+'</a>');
+					//giorniStampati[giorniStampati.length] = giorno;
+					ultimoGiornoStampato = giorno;
 				}
 			});
 			$('#main_page_content').trigger('create').listview('refresh');
@@ -494,7 +531,7 @@ function OnDeviceReady(){
 			success:function(resp){
 				var apikeyVolontario = resp.apiKey;
 				$.ajax({
-					url: srvAddress+'/reparto/'+apikeyVolontario+'/'+idturno,
+					url: srvAddress+'/reparto/'+apikeyVolontario+'/'+idturno+'/'+dataReparto,
 					method: "DELETE",
 					headers: {
 					  'Authorization' :apiKey
@@ -553,6 +590,7 @@ function OnDeviceReady(){
 	});
 	$('#pgAggiungiAltriVolontari').on('click','#btSalvaAggiungiVolontariReparto',function(){
 		var idVolontariDaAggiungere = {};
+		var dataReparto = $(this).attr('data-dataReparto');
 		idVolontariDaAggiungere['volontari']=[];
 		var idturno = 0;
 		$.each($('#listaVolontariAggiungibiliReparto').find('li'),function(){
@@ -570,7 +608,7 @@ function OnDeviceReady(){
 			var idVolontariDaAggiungereString = JSON.stringify(idVolontariDaAggiungere);
 			console.log(idVolontariDaAggiungereString);
 			$.ajax({
-				url:srvAddress+'multiplo/reparto/'+idturno,
+				url:srvAddress+'multiplo/reparto/'+idturno+'/'+dataReparto,
 				type:"POST",
 				headers: {
 				  'Authorization' :apiKey
