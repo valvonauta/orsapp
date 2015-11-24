@@ -11,6 +11,11 @@
 
 		</author>
 		<icon src="icon.png" />
+                <!-- ios -->
+                <icon src="icon.png" platform="ios" width="300" height="300" />
+                <icon src="icon57.png" platform="ios" width="57" height="57" />
+                <icon src="icon72.png" platform="ios" width="72" height="72" />
+
 		<preference name="phonegap-version" value="3.7.0" />
 		<preference name="orientation" value="default" />
 		<preference name="fullscreen" value="false" />
