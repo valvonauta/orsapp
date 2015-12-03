@@ -2,14 +2,15 @@
 	<widget xmlns = "http://www.w3.org/ns/widgets"
 		xmlns:gap = "http://phonegap.com/ns/1.0"
 		id        = "com.orsapp.mquadro"
-		versionCode="6"
-		version   = "0.0.3">
+		versionCode="7"
+		version   = "0.0.4">
 		<name>orsapp</name>
 		<description>
 		</description>
 		<author href="" email="">
 
 		</author>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
 		<icon src="icon.png" />
                 <!-- ios -->
                 <icon src="icon.png" platform="ios" width="300" height="300" />
