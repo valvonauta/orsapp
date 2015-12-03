@@ -19,7 +19,7 @@
                 <icon src="icon152.png" platform="ios" width="152" height="152" />
                 <icon src="icon76.png" platform="ios" width="76" height="76" />
 
-		<preference name="phonegap-version" value="3.7.0" />
+		<preference name="phonegap-version" value="5.2.0" />
 		<preference name="orientation" value="default" />
 		<preference name="fullscreen" value="false" />
 		<preference name="target-device" value="universal" />
