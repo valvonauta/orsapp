@@ -19,7 +19,7 @@
                 <icon src="icon152.png" platform="ios" width="152" height="152" />
                 <icon src="icon76.png" platform="ios" width="76" height="76" />
 
-		<preference name="phonegap-version" value="5.2.0" />
+		<preference name="phonegap-version" value="cli-5.2.0" />
 		<preference name="orientation" value="default" />
 		<preference name="fullscreen" value="false" />
 		<preference name="target-device" value="universal" />
@@ -52,5 +52,5 @@
 		<gap:platform name="ios" />
 		<gap:platform name="android" />
 		<gap:platform name="winphone" />
-		<gap:plugin name="de.appplant.cordova.plugin.email-composer" version="0.8.2" />
+		<gap:plugin name="de.appplant.cordova.plugin.email-composer" version="0.8.2" source="npm"/>
 	</widget>
