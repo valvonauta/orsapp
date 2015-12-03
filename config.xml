@@ -3,7 +3,7 @@
 		xmlns:gap = "http://phonegap.com/ns/1.0"
 		id        = "com.orsapp.mquadro"
 		versionCode="6"
-		version   = "0.0.2">
+		version   = "0.0.3">
 		<name>orsapp</name>
 		<description>
 		</description>
