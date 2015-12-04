@@ -10,7 +10,6 @@
 		<author href="" email="">
 
 		</author>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
 		<icon src="icon.png" />
                 <!-- ios -->
                 <icon src="icon.png" platform="ios" width="300" height="300" />
