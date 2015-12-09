@@ -401,6 +401,10 @@ function loadMainPage()
 	return false;
 }
 function OnDeviceReady(){
+    screengod(['screengod/screengod.css'],function(){
+    alert(app.deviceWidth + "x" + app.deviceHeight);
+});
+
 	showLoading();
 	//window.localStorage.removeItem("orsapp_apikey");
 	valueCookie = window.localStorage.getItem("orsapp_apikey");
