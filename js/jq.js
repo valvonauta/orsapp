@@ -759,5 +759,11 @@ function OnDeviceReady(){
 	$('#main_page').on('click','#linkImpegniFuturi',function(){
 		loadPageMieiImpegni();
 	});
+        $(document).on('vclick', '[data-rel=back]', function (e) {
+ e.stopImmediatePropagation();
+ e.preventDefault();
+ //alert($.mobile.activePage.prev('[data-role=page]').attr('id'));
+ loadMainPage();
+});
 }
 document.addEventListener("deviceready", OnDeviceReady, false);
