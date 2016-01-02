@@ -762,8 +762,11 @@ function OnDeviceReady(){
         $(document).on('vclick', '[data-rel=back]', function (e) {
  e.stopImmediatePropagation();
  e.preventDefault();
- //alert($.mobile.activePage.prev('[data-role=page]').attr('id'));
+if(apiKey.length){
  loadMainPage();
+}
+else
+    $(':mobile-pagecontainer').pagecontainer('change', "#login");
 });
 }
 document.addEventListener("deviceready", OnDeviceReady, false);
