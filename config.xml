@@ -1,57 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-	<widget xmlns = "http://www.w3.org/ns/widgets"
+<?xml version="1.0" encoding="UTF-8"?>	
+<widget xmlns = "http://www.w3.org/ns/widgets"
 		xmlns:gap = "http://phonegap.com/ns/1.0"
 		id        = "com.orsapp.mquadro"
-		versionCode="12"
-		version   = "0.0.10">
-		<name>orsapp</name>
-		<description>
-		</description>
-		<author href="" email="">
-
-		</author>
-		<icon src="icon.png" />
-                <!-- ios -->
-                <icon src="icon.png" platform="ios" width="300" height="300" />
-                <icon src="icon57.png" platform="ios" width="57" height="57" />
-                <icon src="icon72.png" platform="ios" width="72" height="72" />
-                <icon src="icon120.png" platform="ios" width="120" height="120" />
-                <icon src="icon152.png" platform="ios" width="152" height="152" />
-                <icon src="icon76.png" platform="ios" width="76" height="76" />
-
-		<preference name="phonegap-version" value="3.7.0" />
-		<preference name="orientation" value="default" />
-		<preference name="fullscreen" value="false" />
-		<preference name="target-device" value="universal" />
-		<preference name="webviewbounce" value="true" />
-		<preference name="prerendered-icon" value="true" />
-		<preference name="stay-in-webview" value="true" />
-		<preference name="ios-statusbarstyle" value="default" />
-		<preference name="detect-data-types" value="true" />
-		<preference name="exit-on-suspend" value="false" />
-		<preference name="show-splash-screen-spinner" value="true" />
-		<preference name="auto-hide-splash-screen" value="true" />
-		<preference name="EnableViewportScale" value="true" />
-		<preference name="MediaPlaybackRequiresUserAction" value="false" />
-		<preference name="AllowInlineMediaPlayback" value="false" />
-		<preference name="BackupWebStorage" value="cloud" />
-		<preference name="TopActivityIndicator" value="gray" />
-		<preference name="KeyboardDisplayRequiresUserAction" value="false" />
-		<preference name="HideKeyboardFormAccessoryBar" value="false" />
-		<preference name="SuppressesIncrementalRendering" value="false" />
-		<preference name="android-minSdkVersion" value="7" />
-		<preference name="android-installLocation" value="internalOnly" />
-		<preference name="SplashScreenDelay" value="5000" />
-		<preference name="ErrorUrl" value=""/>
-		<preference name="BackgroundColor" value="0x000000"/>
-		<preference name="KeepRunning" value="true"/>
-		<preference name="DisallowOverscroll" value="false"/>
-		<preference name="LoadingDialog" value=","/> 
-		<preference name="LoadUrlTimeoutValue" value="20000" />
-		<preference name="disable-cursor" value="false" />
-		<gap:platform name="ios" />
-		<gap:platform name="android" />
-		<gap:platform name="winphone" />
-		<gap:plugin name="de.appplant.cordova.plugin.email-composer" version="0.8.2"/>
-                <gap:plugin name="de.appplant.cordova.plugin.hidden-statusbar-overlay" />
-	</widget>
+		versionCode="13"
+		version   = "0.0.11">
+    <name>orsapp</name>		
+    <description>		</description>		
+    <author href="" email="">		</author>	
+    <icon src="icon.png" />
+    <!-- ios -->
+    <icon src="icon.png" platform="ios" width="300" height="300" />
+    <icon src="icon57.png" platform="ios" width="57" height="57" />
+    <icon src="icon72.png" platform="ios" width="72" height="72" />
+    <icon src="icon120.png" platform="ios" width="120" height="120" />
+    <icon src="icon152.png" platform="ios" width="152" height="152" />
+    <icon src="icon76.png" platform="ios" width="76" height="76" />
+    <preference name="phonegap-version" value="cli-5.2.0" />
+    <preference name="android-build-tool" value="gradle" />		
+    <platform name="ios" />		
+    <platform name="android" />	
+    <plugin name="cordova-plugin-whitelist" />
+    <plugin name="cordova-plugin-device" /> 
+    <access origin="*" />
+</widget>

@@ -355,7 +355,7 @@ function loadMainPage()
 			});*/
 			//le due variabili sotto regolano quanti giorni indietro e quanti avanti mostrare nella finestra di selezione giorno
 			var giorniIndietro = 2; 
-			var giorniAvanti= 7;
+			var giorniAvanti= 14;
 			var dataInizio = moment().subtract(giorniIndietro,'days').format("YYYY-MM-DD");
 			var dataFine = moment().add(giorniAvanti,'days').format("YYYY-MM-DD");
 			var giorniDaStampare = [];
