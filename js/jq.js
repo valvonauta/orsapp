@@ -478,7 +478,7 @@ function OnDeviceReady(){
 		var giornoTestuale = $(this).attr('data-giornoTestuale');
 		var dataReparto = $(this).attr('data-dataReparto');
 		$.ajax({
-			url: srvAddress+'/reparto/'+apiKey+'/'+idturno,
+			url: srvAddress+'/reparto/'+apiKey+'/'+idturno+'/'+dataReparto,
 			method: "POST",
 			headers: {
 			  'Authorization' :apiKey
@@ -500,7 +500,7 @@ function OnDeviceReady(){
 		var giornoTestuale = $(this).attr('data-giornoTestuale');
 		var dataReparto = $(this).attr('data-dataReparto');
 		$.ajax({
-			url: srvAddress+'/reparto/'+apiKey+'/'+idturno,
+			url: srvAddress+'/reparto/'+apiKey+'/'+idturno+'/'+dataReparto,
 			method: "DELETE",
 			headers: {
 			  'Authorization' :apiKey
