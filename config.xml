@@ -15,11 +15,13 @@
     <icon src="icon120.png" platform="ios" width="120" height="120" />
     <icon src="icon152.png" platform="ios" width="152" height="152" />
     <icon src="icon76.png" platform="ios" width="76" height="76" />
-    <preference name="phonegap-version" value="cli-5.2.0" />
+    <preference name="phonegap-version" value="cli-5.4.1" />
     <preference name="android-build-tool" value="gradle" />		
     <platform name="ios" />		
     <platform name="android" />	
     <plugin name="cordova-plugin-whitelist" />
     <plugin name="cordova-plugin-device" /> 
+    <plugin name="onesignal-cordova-plugin"/>
+
     <access origin="*" />
 </widget>
