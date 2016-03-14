@@ -770,4 +770,20 @@ else
     $(':mobile-pagecontainer').pagecontainer('change', "#login");
 });
 }
-document.addEventListener("deviceready", OnDeviceReady, false);
+document.addEventListener('deviceready', function () {
+  // Enable to debug issues.
+  // window.plugins.OneSignal.setLogLevel({logLevel: 4, visualLevel: 4});
+  
+  var notificationOpenedCallback = function(jsonData) {
+    alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
+  };
+
+  window.plugins.OneSignal.init("5bb8a85f-2b92-4071-b4f6-6dc3366c4e43",
+                                 {googleProjectNumber: "793532828568"},
+                                 notificationOpenedCallback);
+  
+  // Show an alert box if a notification comes in when the user is in your app.
+  window.plugins.OneSignal.enableInAppAlertNotification(true);
+  OnDeviceReady();
+}, false);
+//document.addEventListener("deviceready", OnDeviceReady, false);
