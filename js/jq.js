@@ -6,7 +6,7 @@ var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'htt
 function validateEmail(email) {
     //var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
     //return re.test(email);
-    return true;
+    return 1;
 }
 function showLoading(){
 	$.mobile.loading( "show", {
@@ -726,7 +726,7 @@ function OnDeviceReady(){
 		showLoading();
 		var emailAddress = $('#mailField').val();
 		$('#pgRecuperoPasswordContent').find($('.infoText')).remove();
-		if(validateEmail(emailAddress)){
+		if(validateEmail(emailAddress)===1){
 			$.ajax({
 				url: srvAddress+'password',
 				type:"POST",
