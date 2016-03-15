@@ -774,6 +774,7 @@ document.addEventListener('deviceready', function () {
   // Enable to debug issues.
   // window.plugins.OneSignal.setLogLevel({logLevel: 4, visualLevel: 4});
   if(app){
+    alert("app");
     var notificationOpenedCallback = function(jsonData) {
       alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
     };
