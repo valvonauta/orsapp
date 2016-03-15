@@ -436,6 +436,7 @@ function OnDeviceReady(){
 	}
 	else{
 		hideLoading();
+                alert('ciao');
 		$(':mobile-pagecontainer').pagecontainer('change', "#login");
 	}
 	$('#login').on('click','.bt_loginProprietario',function(){
