@@ -401,11 +401,7 @@ function loadMainPage()
 	});
 	return false;
 }
-function onResume(){
-    alert('resume');
-}
 function OnDeviceReady(){
-    document.addEventListener('resume', onResume,false);
 	showLoading();
 	//window.localStorage.removeItem("orsapp_apikey");
 	valueCookie = window.localStorage.getItem("orsapp_apikey");
