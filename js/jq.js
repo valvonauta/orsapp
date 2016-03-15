@@ -776,7 +776,6 @@ document.addEventListener('deviceready', function () {
   if(app){
     var notificationOpenedCallback = function(jsonData) {
       alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
-      OnDeviceReady();
     };
 
     window.plugins.OneSignal.init("5bb8a85f-2b92-4071-b4f6-6dc3366c4e43",
@@ -786,7 +785,6 @@ document.addEventListener('deviceready', function () {
     // Show an alert box if a notification comes in when the user is in your app.
     window.plugins.OneSignal.enableInAppAlertNotification(false);
   }
-  else
-    OnDeviceReady();
+  OnDeviceReady();
 }, false);
 //document.addEventListener("deviceready", OnDeviceReady, false);
