@@ -401,8 +401,11 @@ function loadMainPage()
 	});
 	return false;
 }
+function onPause() {
+  navigator.app.exitApp();
+};
 function OnDeviceReady(){
-    alert('ciao');
+        document.addEventListener("pause", onPause, false);
 	showLoading();
 
     
