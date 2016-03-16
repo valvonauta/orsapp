@@ -402,6 +402,7 @@ function loadMainPage()
 	return false;
 }
 function OnDeviceReady(){
+    alert('ciao');
 	showLoading();
 
     
