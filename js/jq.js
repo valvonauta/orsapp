@@ -3,6 +3,7 @@ var apiKey = "";
 var idUser = 0;
 var giorni = ["Domenica","Lunedi","Martedi","Mercoledi","Giovedi","Venerdi","Sabato"];
 var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
+var osid = "abc";
 function validateEmail(email) {
     //var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
     //return re.test(email);
@@ -401,6 +402,24 @@ function loadMainPage()
 	});
 	return false;
 }
+function saveOsid(){
+    $.ajax({
+       url:srvAddress+'osid/'+osid,
+       type:"PUT",
+        headers: {
+          'Authorization' :apiKey
+        },
+        success:function(resp){
+            console.log(apiKey);
+            console.log(resp);
+           loadMainPage(); 
+        },
+        error:function(err){
+            loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+            sendMailError("/osid/","PUT",JSON.stringify(err));            
+        }
+    });
+};
 function onPause() {
   navigator.app.exitApp();
 };
@@ -423,12 +442,9 @@ function OnDeviceReady(){
     // Show an alert box if a notification comes in when the user is in your app.
     window.plugins.OneSignal.enableInAppAlertNotification(false);
     window.plugins.OneSignal.getIds(function(ids) {
-        var osid = ids.userId;
+        osid = ids.userId;
     });
   }    
-    
-    
-	//window.localStorage.removeItem("orsapp_apikey");
 	valueCookie = window.localStorage.getItem("orsapp_apikey");
 	apiKeyString = JSON.stringify(valueCookie);
 	if(apiKeyString!="null")
@@ -443,7 +459,8 @@ function OnDeviceReady(){
 			success:function(resp){
 				user = $.parseJSON(resp.user);
 				idUser = parseInt(user['id']);
-				loadMainPage();
+//				loadMainPage();
+                                saveOsid();
 			},
 			error:function(err){
 				if(parseInt(err.status!=401))
@@ -478,7 +495,8 @@ function OnDeviceReady(){
 				window.localStorage.setItem("orsapp_apikey", me['apiKey']);
 				apiKey = me['apiKey'];
 				idUser = me['id'];
-				loadMainPage();
+//				loadMainPage();
+                                saveOsid();
 			},
 			error:function(err){
 				hideLoading();
