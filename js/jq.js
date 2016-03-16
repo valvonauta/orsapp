@@ -792,5 +792,4 @@ else
     $(':mobile-pagecontainer').pagecontainer('change', "#login");
 });
 }
-document.addEventListener('deviceready', onDeviceReady,false);
-//document.addEventListener("deviceready", OnDeviceReady, false);
+document.addEventListener("deviceready", OnDeviceReady, false);
