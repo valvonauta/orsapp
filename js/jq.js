@@ -424,7 +424,6 @@ function OnDeviceReady(){
     window.plugins.OneSignal.enableInAppAlertNotification(false);
     window.plugins.OneSignal.getIds(function(ids) {
         var osid = ids.userId;
-        alert (osid);
     });
   }    
     
