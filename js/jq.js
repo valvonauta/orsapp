@@ -403,6 +403,28 @@ function loadMainPage()
 }
 function OnDeviceReady(){
 	showLoading();
+
+    
+  // Enable to debug issues.
+  // window.plugins.OneSignal.setLogLevel({logLevel: 4, visualLevel: 4});
+  if(app){
+    var notificationOpenedCallback = function(jsonData) {
+      alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
+    };
+
+    window.plugins.OneSignal.init("5bb8a85f-2b92-4071-b4f6-6dc3366c4e43",
+                                   {googleProjectNumber: "793532828568"},
+                                   notificationOpenedCallback);
+
+    // Show an alert box if a notification comes in when the user is in your app.
+    window.plugins.OneSignal.enableInAppAlertNotification(false);
+    window.plugins.OneSignal.getIds(function(ids) {
+        var osid = ids.userId;
+        alert (osid);
+    });
+  }    
+    
+    
 	//window.localStorage.removeItem("orsapp_apikey");
 	valueCookie = window.localStorage.getItem("orsapp_apikey");
 	apiKeyString = JSON.stringify(valueCookie);
@@ -770,22 +792,5 @@ else
     $(':mobile-pagecontainer').pagecontainer('change', "#login");
 });
 }
-document.addEventListener('deviceready', function () {
-  // Enable to debug issues.
-  // window.plugins.OneSignal.setLogLevel({logLevel: 4, visualLevel: 4});
-  if(app){
-    alert("app");
-    var notificationOpenedCallback = function(jsonData) {
-      alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
-    };
-
-    window.plugins.OneSignal.init("5bb8a85f-2b92-4071-b4f6-6dc3366c4e43",
-                                   {googleProjectNumber: "793532828568"},
-                                   notificationOpenedCallback);
-
-    // Show an alert box if a notification comes in when the user is in your app.
-    window.plugins.OneSignal.enableInAppAlertNotification(false);
-  }
-  OnDeviceReady();
-}, false);
+document.addEventListener('deviceready', onDeviceReady,false);
 //document.addEventListener("deviceready", OnDeviceReady, false);
