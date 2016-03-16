@@ -410,8 +410,7 @@ function saveOsid(){
           'Authorization' :apiKey
         },
         success:function(resp){
-            console.log(apiKey);
-            console.log(resp);
+            alert(JSON.stringify(resp));
            loadMainPage(); 
         },
         error:function(err){
