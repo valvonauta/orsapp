@@ -410,7 +410,6 @@ function saveOsid(){
           'Authorization' :apiKey
         },
         success:function(resp){
-            alert(JSON.stringify(resp));
            loadMainPage(); 
         },
         error:function(err){
@@ -431,7 +430,9 @@ function OnDeviceReady(){
   // window.plugins.OneSignal.setLogLevel({logLevel: 4, visualLevel: 4});
   if(app){
     var notificationOpenedCallback = function(jsonData) {
-      alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
+      //alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
+      //window.localStorage.setItem("orsapp_notification", "1");
+      alert(jsonData.isActive);
     };
 
     window.plugins.OneSignal.init("5bb8a85f-2b92-4071-b4f6-6dc3366c4e43",
