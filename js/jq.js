@@ -319,6 +319,10 @@ function loadDtGiornoReparto(giornoNumerico, giornoTestuale, dataReparto)
 	});
 	return false;
 }
+function loadInboxPage(){
+	$('#pgInbox').html('');
+	$(':mobile-pagecontainer').pagecontainer('change', "#pgInbox");    
+}
 function loadMainPage()
 {
 	$('#main_page_content').html('');
@@ -432,7 +436,12 @@ function OnDeviceReady(){
     var notificationOpenedCallback = function(jsonData) {
       //alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
       //window.localStorage.setItem("orsapp_notification", "1");
-      alert(jsonData.isActive);
+      if(jsonData.isActive){
+         if($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr('id') == "pgInbox"){
+            showLoading();
+            loadInboxPage();
+         }
+      }
     };
 
     window.plugins.OneSignal.init("5bb8a85f-2b92-4071-b4f6-6dc3366c4e43",
@@ -510,6 +519,10 @@ function OnDeviceReady(){
 	$('.navLinkReparto').click(function(){
 		showLoading();
 		loadMainPage();
+	});
+	$('#navlinkInbox').click(function(){
+		showLoading();
+		loadInboxPage();
 	});
 	$('#main_page_content').on('click','#linkDtGiornoReparto',function(){
 		//showLoading();
