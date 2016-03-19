@@ -505,7 +505,12 @@ function saveOsid(){
                     var comunicazioniString = respComunicazioni.comunicazioni;
                     var comunicazioniObj = $.parseJSON(comunicazioniString);
                     editCountBubl(comunicazioniObj.length);
-                    loadMainPage(); 
+                    if(JSON.stringify(window.localStorage.getItem("orsapp_notificationtapped"))==="null")
+                        loadMainPage();
+                    else{
+                        window.localStorage.removeItem("orsapp_notificationtapped");
+                        loadInboxPage(1);
+                    }
                 },
                 error:function(err){
                     loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
@@ -537,6 +542,9 @@ function OnDeviceReady(){
             showLoading();
             loadInboxPage(1);
          }
+      }
+      else{
+          window.localStorage.setItem("orsapp_notificationtapped", 1);
       }
     };
 
