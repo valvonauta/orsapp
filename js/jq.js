@@ -347,6 +347,7 @@ function loadDtComunicazione(idcomunicazione){
                         'Authorization':apiKey            
                     },
                     success:function(){
+                        editCountBubl("-1");
                         hideLoading();
                     },
                     error:function(err){
@@ -376,6 +377,7 @@ function loadDtComunicazione(idcomunicazione){
 function loadInboxPage(comtype){
 	$('#pgInboxContent').html('');
 	$(':mobile-pagecontainer').pagecontainer('change', "#pgInbox"); 
+        showLoading();
         $.ajax({
             url: srvAddress+'comunicazioniutente/'+comtype,
             type:"GET",
@@ -492,7 +494,24 @@ function saveOsid(){
           'Authorization' :apiKey
         },
         success:function(resp){
-           loadMainPage(); 
+           //prima di caricare la pagina principale guardo quante notifiche non lette ho
+           $.ajax({
+               url: srvAddress+'/comunicazioniutente/1',
+               type:"GET",
+                headers: {
+                  'Authorization' :apiKey
+                },
+                success: function(respComunicazioni){
+                    var comunicazioniString = respComunicazioni.comunicazioni;
+                    var comunicazioniObj = $.parseJSON(comunicazioniString);
+                    editCountBubl(comunicazioniObj.length);
+                    loadMainPage(); 
+                },
+                error:function(err){
+                    loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+                    sendMailError("/comunicazioniutente/1","GET",JSON.stringify(err));            
+                }                
+           });
         },
         error:function(err){
             loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
