@@ -15,7 +15,19 @@
 <script type="text/javascript" src="phonegap.js"></script>
 <script type="text/javascript" src="js/jq.js"></script>
 <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-<title>PhoneGap Android App</title>    
+<title>PhoneGap Android App</title>   
+<style>
+        .countBubl {
+        float:left;
+        margin-top:-20px;
+        margin-left:35px;
+        background: #BA070F;
+        color: #fff;
+        padding:2px; 
+        border-radius: .8em;
+        min-width:2em;
+    }
+</style>
 </head>
 <body> 
 <!-- pagina login!--->
@@ -47,7 +59,7 @@
 		<li><a href="#main_page" class="ui-btn-active ui-state-persist navLinkReparto" data-icon="refresh">Reparto</a></li>
 		<li><a href="#main_page" data-icon="refresh" class='ui-disabled'>Eventi</a></li>
 		<li><a href="#main_page" data-icon="refresh" class='ui-disabled'>Tana</a></li>
-                <li><a href="#" data-icon="mail" id="navlinkInbox">Inbox</a></li>
+                <li><a href="#" data-icon="mail" id="navlinkInbox">Inbox<span class="ui-li-count ui-btn-corner-all countBubl">0</span></a></li>
 	</ul>
 </div><!-- /navbar -->
 </div>
@@ -122,11 +134,28 @@
 </div>
 <!--pagina inbox-->
 <div data-role="page" id="pgInbox">
-<div data-role="header" style="height:3em;" id='headerpgInbox'>
-<h1 id='headerTxtpgInbox'>ORSAPP</h1><a href="#" data-icon="back" data-rel="back" title="Go back">Indietro</a>
+<div data-role="header" data-position="fixed">
+<h1>ORSAPP</h1>
+<div data-role="navbar" data-iconpos="bottom" data-theme="b">
+	<ul>
+                <li><a href="#" data-icon="back" data-rel="back" title="Go back">Indietro</a></li>
+		<li><a href="#" class="ui-btn-active ui-state-persist navLinkComunicazioniNonLette" data-icon="mail">Da leggere</a></li>
+		<li><a href="#" class="navLinkComunicazioniLette" data-icon="check">Lette</a></li>
+		<li><a href="#main_page" data-icon="plus" class='ui-disabled'>Nuova</a></li>
+	</ul>
+</div><!-- /navbar -->
 </div>
 <div id='pgInboxContent' data-role="content" class="ui-content">
     contenuto inbox
+</div>
+</div>
+<!--pagina comunicazione-->
+<div data-role="page" id="pgDtComunicazione">
+<div data-role="header" style="height:3em;"  data-position="fixed">
+<h1>ORSAPP</h1><a href="#" data-icon="back" data-rel="back" title="Go back">Indietro</a>
+</div>
+<div id='pgDtComunicazioneContent' data-role="content" class="ui-content">
+    dettaglio comunicazione
 </div>
 </div>
 </body>

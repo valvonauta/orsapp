@@ -3,7 +3,7 @@ var apiKey = "";
 var idUser = 0;
 var giorni = ["Domenica","Lunedi","Martedi","Mercoledi","Giovedi","Venerdi","Sabato"];
 var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
-var osid = "abc";
+var osid = "8a7c2d30-ba3f-4a4d-aae4-53641cf7eb44";
 function validateEmail(email) {
     //var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
     //return re.test(email);
@@ -319,9 +319,81 @@ function loadDtGiornoReparto(giornoNumerico, giornoTestuale, dataReparto)
 	});
 	return false;
 }
-function loadInboxPage(){
-	$('#pgInbox').html('');
-	$(':mobile-pagecontainer').pagecontainer('change', "#pgInbox");    
+function loadDtComunicazione(idcomunicazione){
+    $('#pgDtComunicazioneContent').html('');
+    $(':mobile-pagecontainer').pagecontainer('change', "#pgDtComunicazione");
+    showLoading();
+    $.ajax({
+        url:srvAddress+'/comunicazione/'+idcomunicazione,
+        type:"GET",
+        headers:{
+            'Authorization':apiKey            
+        },
+        success:function(respGetComunicazione){
+            //se la comunicazione non è ancora letta devo passarla a letta
+            var comunicazioneString = respGetComunicazione.comunicazione;
+            var comunicazioneObj = $.parseJSON(comunicazioneString);
+            if(!parseInt(comunicazioneObj['letta'])){
+               $.ajax({
+                   url: srvAddress+'comunicazione/'+idcomunicazione,
+                   type:"PUT",
+                    headers:{
+                        'Authorization':apiKey            
+                    },
+                    success:function(){
+                        hideLoading();
+                    },
+                    error:function(err){
+                        hideLoading();
+                        loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+                        sendMailError("comunicazione/"+idcomunicazione,"PUT",JSON.stringify(err));
+                    }
+               }); 
+            }
+            else
+                hideLoading();
+            $('#pgDtComunicazioneContent').append("<p style='font-weight:bold;'>"+comunicazioneObj['titolo']+"</p>");
+            $('#pgDtComunicazioneContent').append("<p style='text-align:justify;'>"+comunicazioneObj['testo']+"</p><br>");
+            $('#pgDtComunicazioneContent').append("<p style='text-align:justify; text-align:right; font-style:italic;'>scritto da "+comunicazioneObj['mittenteString']+" il "+moment(comunicazioneObj['datainvio'],"YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY")+"</p><br>");                        
+
+        },
+        error:function(errGetComunicazione){
+            hideLoading();
+            loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+            sendMailError("comunicazione/"+idcomunicazione,"GET",JSON.stringify(errGetComunicazione));            
+        }
+    });
+}
+/*
+ * comtype: 0 = tutte, 1 = non lette, 2 = lette
+ */
+function loadInboxPage(comtype){
+	$('#pgInboxContent').html('');
+	$(':mobile-pagecontainer').pagecontainer('change', "#pgInbox"); 
+        $.ajax({
+            url: srvAddress+'comunicazioniutente/'+comtype,
+            type:"GET",
+            headers: {
+              'Authorization' :apiKey
+            },
+            success:function(resp){
+                var comunicazioniString = resp.comunicazioni;
+                var comunicazioniObj = $.parseJSON(comunicazioniString);
+                console.log(comunicazioniObj);
+                $('#pgInboxContent').html('<ul data-role="listview" id="listacomunicazioni"></ul>');
+		//$('#listaGiorniReparto').append("<li><a href='#' id='linkImpegniFuturi'>I tuoi impegni</a></li>");
+                $.each(comunicazioniObj,function(index,comunicazioneObj){
+                    $('#listacomunicazioni').append("<li><a href='#' class='linkComunicazione' data-idcomunicazione='"+comunicazioneObj['id_comunicazione']+"'>"+comunicazioneObj['titolo']+"</a></li>");
+                });
+                $('#pgInboxContent').trigger('create').listview('refresh');
+            },
+            error:function(err){
+                    hideLoading();
+                    loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+                    sendMailError("comunicazioniutente/"+comtype,"GET",JSON.stringify(err));
+            }
+        });
+        hideLoading();
 }
 function loadMainPage()
 {
@@ -437,9 +509,10 @@ function OnDeviceReady(){
       //alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
       //window.localStorage.setItem("orsapp_notification", "1");
       if(jsonData.isActive){
+            $(".countBubl").text(parseInt($(".countBubl").text())++);
          if($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr('id') == "pgInbox"){
             showLoading();
-            loadInboxPage();
+            loadInboxPage(1);
          }
       }
     };
@@ -522,7 +595,7 @@ function OnDeviceReady(){
 	});
 	$('#navlinkInbox').click(function(){
 		showLoading();
-		loadInboxPage();
+		loadInboxPage(1);
 	});
 	$('#main_page_content').on('click','#linkDtGiornoReparto',function(){
 		//showLoading();
@@ -824,6 +897,15 @@ if(apiKey.length){
 }
 else
     $(':mobile-pagecontainer').pagecontainer('change', "#login");
+});
+$(document).on('click','.linkComunicazione',function(){
+    loadDtComunicazione($(this).attr('data-idcomunicazione'));
+});
+$('.navLinkComunicazioniLette').click(function(){
+   loadInboxPage(2);
+});
+$('.navLinkComunicazioniNonLette').click(function(){
+   loadInboxPage(1);
 });
 }
 document.addEventListener("deviceready", OnDeviceReady, false);
