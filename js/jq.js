@@ -9,6 +9,12 @@ function validateEmail(email) {
     //return re.test(email);
     return 1;
 }
+function editCountBubl(strAddendo){
+    var numNotificheCorrente = parseInt($('.countBubl').text());
+    var addendo = parseInt(strAddendo);
+    var nuovoNumNotifiche = numNotificheCorrente + addendo;
+    $('.countBubl').text(nuovoNumNotifiche);
+}
 function showLoading(){
 	$.mobile.loading( "show", {
   text: "Attendi",
@@ -500,8 +506,6 @@ function onPause() {
 function OnDeviceReady(){
         document.addEventListener("pause", onPause, false);
 	showLoading();
-
-    
   // Enable to debug issues.
   // window.plugins.OneSignal.setLogLevel({logLevel: 4, visualLevel: 4});
   if(app){
@@ -509,7 +513,7 @@ function OnDeviceReady(){
       //alert('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
       //window.localStorage.setItem("orsapp_notification", "1");
       if(jsonData.isActive){
-            $(".countBubl").text(parseInt($(".countBubl").text())++);
+            editCountBubl("+1");
          if($( ":mobile-pagecontainer" ).pagecontainer( "getActivePage" ).attr('id') == "pgInbox"){
             showLoading();
             loadInboxPage(1);
