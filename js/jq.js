@@ -56,9 +56,11 @@ function loadPageMieiImpegni(){
 		}
 	});
 }
-function loadPgErrore(msg){
+function loadPgErrore(msg,err){
 	$(':mobile-pagecontainer').pagecontainer('change', "#paginaErrore");
 	$('#paginaErroreContent').html(msg);
+        if(typeof err !== 'undefined')
+           alert(err);
 }
 function loadPgRecuperoPassword()
 {
@@ -684,7 +686,7 @@ function OnDeviceReady(){
 			},
 			error:function(err){
 				hideLoading();
-				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+				loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere",JSON.stringify(err));
 				sendMailError('/reparto/'+apiKey+'/'+idturno,"DELETE",JSON.stringify(err));
 			}
 		});
