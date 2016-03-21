@@ -315,7 +315,7 @@ function loadDtGiornoReparto(giornoNumerico, giornoTestuale, dataReparto)
 					{
 						$('.dtTurnoReparto.'+idturno).append('<li><a href="#" data-role="button" data-icon="calendar" class="addOtherUserTurno '+idturno+'" data-idturno='+idturno+' data-giornoNumerico='+giornoNumerico+' data-giornoTestuale='+giornoTestuale+' data-dataReparto='+dataReparto+' data-volontari='+dataidVolontari+'><center>Aggiungi altri volontari</center></a></li>');											
 					}
-                                        if(BtEnabled && (btJoin || utenteReferente) && dataidVolontari.length){
+                                        if(BtEnabled && (!btJoin || utenteReferente) && dataidVolontari.length){
                                             $('.dtTurnoReparto.'+idturno).append('<li><a href="#" data-role="button" data-icon="mail" class="sendMessage '+idturno+'" data-idturno='+idturno+' data-giornoNumerico='+giornoNumerico+' data-giornoTestuale='+giornoTestuale+' data-dataReparto='+dataReparto+' data-volontari='+dataidVolontari+'><center>Invia un messaggio</center></a></li>');
                                         }
 					$('.counterVolontariTurno.'+idturno).text(nVolontari);
