@@ -158,5 +158,33 @@
     dettaglio comunicazione
 </div>
 </div>
+<!--pagina nuovo messaggio-->
+<div data-role="page" id="pgNuovoMessaggio">
+<div data-role="header" style="height:3em;"  data-position="fixed">
+<h1>ORSAPP</h1><a href="#" data-icon="back" data-rel="back" title="Go back">Indietro</a>
+</div>
+<div id='pgNuovoMessaggioContent' data-role="content" class="ui-content">
+    <div class="alert alert-info infoDestinatariMsg" role="alert">
+        <strong>Il messaggio sarà recapitato a chi ha già aderito a questo reparto</strong>
+    </div>
+    <div class="alert alert-warning waitSendMsg alertNuovoMessaggio" style="display:none;" role="alert">
+        <strong>Attendere</strong>
+    </div>
+    <div class="alert alert-success okSendMsg alertNuovoMessaggio" style="display:none;" role="alert">
+        <strong>Messaggio inviato</strong>
+    </div>
+    <div class="alert alert-danger errorSengMsg alertNuovoMessaggio" style="display:none;" role="alert">
+        <strong>Messaggio non inviato</strong>
+    </div>
+    <form action="#" method="post">
+        <label for="txtTitoloNuovoMessaggio">Titolo:</label>
+        <input type="text" name="name" id="txtTitoloNuovoMessaggio" />
+        <label for="txtTestoNuovoMessaggio">Testo</label>
+        <textarea id = "txtTestoNuovoMessaggio" rows="20"></textarea>
+        <a href="#" data-role="button" data-icon="forward" id="btInviaNuovoMessaggio">Invia</a>
+        <input type='hidden' value='' id='listaDestinatariNuovoMessaggio'>
+    </form>
+</div>
+</div>
 </body>
 </html>

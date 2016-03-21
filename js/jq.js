@@ -4,6 +4,7 @@ var idUser = 0;
 var giorni = ["Domenica","Lunedi","Martedi","Mercoledi","Giovedi","Venerdi","Sabato"];
 var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
 var osid = "8a7c2d30-ba3f-4a4d-aae4-53641cf7eb44";
+var turniReferente = [];
 function validateEmail(email) {
     //var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
     //return re.test(email);
@@ -312,6 +313,9 @@ function loadDtGiornoReparto(giornoNumerico, giornoTestuale, dataReparto)
 					{
 						$('.dtTurnoReparto.'+idturno).append('<li><a href="#" data-role="button" data-icon="calendar" class="addOtherUserTurno '+idturno+'" data-idturno='+idturno+' data-giornoNumerico='+giornoNumerico+' data-giornoTestuale='+giornoTestuale+' data-dataReparto='+dataReparto+' data-volontari='+dataidVolontari+'><center>Aggiungi altri volontari</center></a></li>');											
 					}
+                                        if(BtEnabled && (btJoin || utenteReferente) && dataidVolontari.length){
+                                            $('.dtTurnoReparto.'+idturno).append('<li><a href="#" data-role="button" data-icon="mail" class="sendMessage '+idturno+'" data-idturno='+idturno+' data-giornoNumerico='+giornoNumerico+' data-giornoTestuale='+giornoTestuale+' data-dataReparto='+dataReparto+' data-volontari='+dataidVolontari+'><center>Invia un messaggio</center></a></li>');
+                                        }
 					$('.counterVolontariTurno.'+idturno).text(nVolontari);
 				});
 			});
@@ -524,6 +528,13 @@ function saveOsid(){
         }
     });
 };
+function loadPgNuovoMessaggio(destinatari,titolo){
+    $('#txtTitoloNuovoMessaggio').val(titolo).addClass('ui-disabled');
+    $('.alertNuovoMessaggio').hide();
+    $('#txtTestoNuovoMessaggio').val('');
+    $(':mobile-pagecontainer').pagecontainer('change', "#pgNuovoMessaggio");
+    $('#listaDestinatariNuovoMessaggio').val(destinatari);
+}
 function onPause() {
   navigator.app.exitApp();
 };
@@ -572,6 +583,7 @@ function OnDeviceReady(){
 			success:function(resp){
 				user = $.parseJSON(resp.user);
 				idUser = parseInt(user['id']);
+                                turniReferente = user['referente'];
 //				loadMainPage();
                                 saveOsid();
 			},
@@ -608,6 +620,7 @@ function OnDeviceReady(){
 				window.localStorage.setItem("orsapp_apikey", me['apiKey']);
 				apiKey = me['apiKey'];
 				idUser = me['id'];
+                                turniReferente = me['referente'];
 //				loadMainPage();
                                 saveOsid();
 			},
@@ -639,7 +652,7 @@ function OnDeviceReady(){
 		var giornoTestuale = $(this).attr('data-giornoTestuale');
 		var dataReparto = $(this).attr('data-dataReparto');
 		$.ajax({
-			url: srvAddress+'/reparto/'+apiKey+'/'+idturno+'/'+dataReparto,
+			url: srvAddress+'reparto/'+apiKey+'/'+idturno+'/'+dataReparto,
 			method: "POST",
 			headers: {
 			  'Authorization' :apiKey
@@ -937,6 +950,49 @@ $('.navLinkComunicazioniLette').click(function(){
 });
 $('.navLinkComunicazioniNonLette').click(function(){
    loadInboxPage(1);
+});
+$(document).on('click','.sendMessage',function(){
+   var destinatariString = $(this).attr('data-volontari');
+   var destinatari = destinatariString.substring(0, destinatariString.length - 1).split(",");
+   var titolo = "";
+   if(typeof $(this).attr('data-dataReparto') !== "undefined")
+   {
+       //in questo caso sto mandando un messaggio ai partecipanti ad un reparto,
+       //in futuro magari si potranno inviare anche a partecipanti ad eventi o tana
+       titolo = "Reparto "+moment($(this).attr('data-dataReparto'),"YYYY-MM-DD").format("DD/MM/YYYY");
+   }
+   loadPgNuovoMessaggio(destinatari,titolo);
+});
+$('#btInviaNuovoMessaggio').click(function(){
+   $('.waitSendMsg').show();
+   var titoloMsg = $('#txtTitoloNuovoMessaggio').val();
+   var testoMsg = $('#txtTestoNuovoMessaggio').val();
+   var destinatariMsg = $('#listaDestinatariNuovoMessaggio').val();
+    $.ajax({
+        url: srvAddress+"comunicazione",
+        type:"POST",
+        headers:{
+                'Authorization' : apiKey
+        },
+        data:{
+             'utenti':destinatariMsg,
+             'mittente':idUser,
+            'testo':testoMsg,
+            'titolo':titoloMsg,
+            'puppet':'  '
+        },
+        success:function(resp){
+            console.log(resp);
+            $('.alertNuovoMessaggio').hide();
+            $('.okSendMsg').show();
+        },
+        error:function(err){
+            $('.alertNuovoMessaggio').hide();
+            $('.errorSengMsg').show();
+            loadPgErrore("si è verificato un errore, alla finestra di invio mail ti prego di inviarla così potrò correggere");
+            sendMailError('comunicazione/',"POST",JSON.stringify(err));
+        }
+    });   
 });
 }
 document.addEventListener("deviceready", OnDeviceReady, false);
