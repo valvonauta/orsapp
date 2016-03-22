@@ -538,7 +538,9 @@ function loadPgNuovoMessaggio(destinatari,titolo){
     $('#listaDestinatariNuovoMessaggio').val(destinatari);
 }
 function onPause() {
-  navigator.app.exitApp();
+    alert(device.platform);
+    if(device.platform!=='iOS')
+        navigator.app.exitApp();
 };
 function OnDeviceReady(){
         document.addEventListener("pause", onPause, false);
