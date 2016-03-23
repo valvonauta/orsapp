@@ -542,6 +542,7 @@ function onPause() {
         navigator.app.exitApp();
 };
 function OnDeviceReady(){
+    if(device.platform!=='iOS' && device.platform!=='IOS' && device.platform!=='ios')
         document.addEventListener("pause", onPause, false);
 	showLoading();
   // Enable to debug issues.
