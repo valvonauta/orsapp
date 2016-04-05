@@ -22,7 +22,7 @@
     <platform name="android" />	
     <plugin name="cordova-plugin-whitelist" />
     <plugin name="cordova-plugin-device" /> 
-    <plugin name="onesignal-cordova-plugin"/>
+    <plugin name="onesignal-cordova-plugin" spec="1.12.1"/>
 
     <access origin="*" />
 </widget>
