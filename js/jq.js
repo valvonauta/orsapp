@@ -5,6 +5,7 @@ var giorni = ["Domenica","Lunedi","Martedi","Mercoledi","Giovedi","Venerdi","Sab
 var app = document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1;
 var osid = "8a7c2d30-ba3f-4a4d-aae4-53641cf7eb44";
 var turniReferente = [];
+var nomeCognomeUtente = "";
 function validateEmail(email) {
     //var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
     //return re.test(email);
@@ -311,13 +312,15 @@ function loadDtGiornoReparto(giornoNumerico, giornoTestuale, dataReparto)
 						if(!BtEnabled)
 							$('.deleteFromTurno.'+idturno).addClass('ui-disabled');
 					}
-					if(utenteReferente)
-					{
-						$('.dtTurnoReparto.'+idturno).append('<li><a href="#" data-role="button" data-icon="calendar" class="addOtherUserTurno '+idturno+'" data-idturno='+idturno+' data-giornoNumerico='+giornoNumerico+' data-giornoTestuale='+giornoTestuale+' data-dataReparto='+dataReparto+' data-volontari='+dataidVolontari+'><center>Aggiungi altri volontari</center></a></li>');											
-					}
                                         if(BtEnabled && (!btJoin || utenteReferente) && dataidVolontari.length){
                                             $('.dtTurnoReparto.'+idturno).append('<li><a href="#" data-role="button" data-icon="mail" class="sendMessage '+idturno+'" data-idturno='+idturno+' data-giornoNumerico='+giornoNumerico+' data-giornoTestuale='+giornoTestuale+' data-dataReparto='+dataReparto+' data-volontari='+dataidVolontari+'><center>Invia un messaggio</center></a></li>');
                                         }
+					if(utenteReferente)
+					{
+                                            $('.dtTurnoReparto.'+idturno).append('<li><a href="#" data-role="button" data-icon="calendar" class="addOtherUserTurno '+idturno+'" data-idturno='+idturno+' data-giornoNumerico='+giornoNumerico+' data-giornoTestuale='+giornoTestuale+' data-dataReparto='+dataReparto+' data-volontari='+dataidVolontari+'><center>Aggiungi altri volontari</center></a></li>');
+                                            if(BtEnabled && false)    
+                                                $('.dtTurnoReparto.'+idturno).append('<li><a href="#" data-role="button" data-icon="audio" class="lanciaAllarme '+idturno+'" data-idturno='+idturno+' data-giornoNumerico='+giornoNumerico+' data-giornoTestuale='+giornoTestuale+' data-dataReparto='+dataReparto+' data-volontari='+dataidVolontari+'><center>Lancia un allarme</center></a></li>');
+					}                                        
 					$('.counterVolontariTurno.'+idturno).text(nVolontari);
 				});
 			});
@@ -958,7 +961,7 @@ $('.navLinkComunicazioniNonLette').click(function(){
 $(document).on('click','.sendMessage',function(){
    var destinatariString = $(this).attr('data-volontari');
    var destinatari = destinatariString.substring(0, destinatariString.length - 1).split(",");
-   var titolo = "";
+   var titolo = ""; 
    if(typeof $(this).attr('data-dataReparto') !== "undefined")
    {
        //in questo caso sto mandando un messaggio ai partecipanti ad un reparto,
@@ -997,6 +1000,13 @@ $('#btInviaNuovoMessaggio').click(function(){
             sendMailError('comunicazione/',"POST",JSON.stringify(err));
         }
     });   
+});
+$(document).on('click','.lanciaAllarme',function(){
+   showLoading();
+   $.ajax({
+       url: srvAddress+'me',
+       type:"GET",
+   });
 });
 }
 document.addEventListener("deviceready", OnDeviceReady, false);
